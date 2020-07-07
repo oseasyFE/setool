@@ -1,0 +1,71 @@
+﻿<Window x:Class="setool.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:setool"
+        mc:Ignorable="d"
+        Title="搜索引擎配置工具" Height="450" Width="800">
+    <Window.Resources>
+        <local:DataContext x:Key="dataContext"/>
+        <CollectionViewSource Source="{Binding Source={StaticResource dataContext}, Path=Engines}" x:Key="lnkView"/>
+        <CollectionViewSource Source="{Binding Source={StaticResource dataContext}, Path=Engines}" x:Key="mpView"/>
+        <CollectionViewSource Source="{Binding Source={StaticResource dataContext}, Path=Engines}" x:Key="seView"/>
+        <Style TargetType="{x:Type CheckBox}" x:Key="row1">
+            <Setter Property="Margin" Value="0 20 0 0"/>
+        </Style>
+        <Style TargetType="{x:Type Control}" x:Key="row2">
+            <Setter Property="Margin" Value="10 20 10 20"/>
+        </Style>
+        <Style TargetType="{x:Type Control}" x:Key="row3">
+            <Setter Property="Margin" Value="10 0 10 20"/>
+        </Style>
+    </Window.Resources>
+    <Grid DataContext="{Binding Source={StaticResource dataContext}}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/> 
+            <RowDefinition Height="5*"/>
+        </Grid.RowDefinitions>
+        <Label HorizontalAlignment="Center" FontSize="36" FontWeight="Bold" Grid.ColumnSpan="5" Grid.Row="0">搜索引擎配置工具</Label>
+        <StackPanel x:Name="browserPanel" Orientation="Horizontal" Grid.ColumnSpan="5" Grid.Row="1" Margin="10 20 10 0">
+        </StackPanel>
+        <ComboBox x:Name="lnkCombo" Grid.Row="2" Grid.Column="0" SelectedItem="{Binding Path=Shortcut}" ItemsSource="{Binding Source={StaticResource lnkView}}" DisplayMemberPath="Name" Style="{StaticResource row2}"></ComboBox>
+        <ComboBox x:Name="mpCombo" Grid.Row="2" Grid.Column="1" SelectedItem="{Binding Path=Homepage}" ItemsSource="{Binding Source={StaticResource mpView}}" DisplayMemberPath="Name" Style="{StaticResource row2}"></ComboBox>
+        <ComboBox x:Name="seCombo" Grid.Row="2" Grid.Column="2" SelectedItem="{Binding Path=DefaultEngine}" ItemsSource="{Binding Source={StaticResource seView}}" DisplayMemberPath="Name" Style="{StaticResource row2}"></ComboBox>
+        <Button x:Name="rcvBtn" Grid.Row="2" Grid.Column="3" Style="{StaticResource row2}" Click="rcvBtn_Click">取消所有修改</Button>
+        <Button x:Name="execAll" Grid.Row="2" Grid.Column="4" IsEnabled="{Binding Path=IsAllSelected}" Style="{StaticResource row2}" Click="execAll_Click">一键执行所有修改</Button>
+
+        <Button x:Name="lnkBtn" Grid.Row="3" Grid.Column="0" IsEnabled="{Binding Path=HasShortcut}" Style="{StaticResource row3}" Click="lnkBtn_Click">添加桌面浏览器链接</Button>
+        <Button x:Name="mpBtn" Grid.Row="3" Grid.Column="1" IsEnabled="{Binding Path=HasHomepage}" Style="{StaticResource row3}" Click="mpBtn_Click">修改浏览器默认主页</Button>
+        <Button x:Name="seBtn" Grid.Row="3" Grid.Column="2" IsEnabled="{Binding Path=HasDefaultEngine}" Style="{StaticResource row3}" Click="seBtn_Click">修改默认搜索引擎</Button>
+        <Button x:Name="cookieBtn" Grid.Row="3" Grid.Column="4" Style="{StaticResource row3}" Click="cookieBtn_Click">一键清除Cookies</Button>
+
+        <Border Grid.Row="4" Grid.ColumnSpan="5" Margin="10 0 10 10">
+            <DockPanel LastChildFill="True">
+                <Label DockPanel.Dock="Top">搜索引擎库</Label>
+                <StackPanel DockPanel.Dock="Top" ButtonBase.Click="onRecordOp" Orientation="Horizontal">
+                    <Button x:Name="AddRecordBtn">添加</Button>
+                    <Button x:Name="EditRecordBtn" Margin="10 0 10 0" IsEnabled="{Binding Path=HasRowSelected}">编辑</Button>
+                    <Button x:Name="RemoveRecordBtn" IsEnabled="{Binding Path=HasRowSelected}">删除</Button>
+                </StackPanel>
+                <DataGrid DockPanel.Dock="Bottom" Margin="0 10 0 0" x:Name="seGrid" IsReadOnly="True" ItemsSource="{Binding Path=Engines}" AutoGenerateColumns="False" SelectionMode="Single" SelectionChanged="seGrid_SelectionChanged">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="搜索引擎名称" Binding="{Binding Name}"/>
+                        <DataGridTextColumn Header="主页链接" Binding="{Binding MainPage}" />
+                        <DataGridTextColumn Header="搜索引擎" Binding="{Binding LnkPage}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </DockPanel>
+        </Border>
+    </Grid>
+</Window>
